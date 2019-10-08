@@ -5,6 +5,7 @@ include "header.php";
 ?>
 
 <link href="vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+<link href="css/buttons.dataTables.min.css" rel="stylesheet">
 
 <!-- Begin Page Content -->
 <div class="container-fluid">
@@ -86,6 +87,8 @@ include "header.php";
 <script src="js/sb-admin-2.min.js"></script>
 
 <script type="text/javascript" src="js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="js/dataTables.buttons.min.js"></script>
+<script type="text/javascript" src="js/buttons.print.min.js"></script>
 
 <script type="text/javascript" src="https://cdn.datatables.net/plug-ins/1.10.19/i18n/Portuguese-Brasil.json"></script>
 
@@ -96,7 +99,22 @@ include "header.php";
 <script type="text/javascript">
   $(document).ready(function() {
     $('#lista_qrcode').DataTable({
-      "language": {
+      dom: 'Bfrtip',
+      "columnDefs": [
+    { "width": "80%", "targets": 0 }
+  ],
+        buttons: [
+            {
+                extend: 'print',
+                exportOptions: {
+                stripHtml: false,
+                trim: false
+                }
+            }
+        ]
+      ,"columnDefs": [
+    { "width": "80%", "targets": 0 }
+  ],"language": {
         "sEmptyTable": "Nenhum registro encontrado",
         "sInfo": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
         "sInfoEmpty": "Mostrando 0 até 0 de 0 registros",
