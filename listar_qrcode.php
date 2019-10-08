@@ -24,27 +24,27 @@ include "header.php";
           <table class="table table-bordered table-striped " id="lista_qrcode" width="100%" cellspacing="0">
             <thead>
               <tr>
-              <th>Título Projeto</th>
+                <th>Título Projeto</th>
                 <th>QrCode</th>
               </tr>
             </thead>
 
             <tbody>
-            <?php
-            mysqli_query($conexao,"SET character_set_results = 'utf8'");
-			$query = mysqli_query($conexao, "SELECT id,nome_projeto FROM PROJETOS");
+              <?php
+              mysqli_query($conexao, "SET character_set_results = 'utf8'");
+              $query = mysqli_query($conexao, "SELECT id,nome_projeto FROM PROJETOS");
 
-           while ($result = mysqli_fetch_array($query)) {
-				$nome=$result['nome_projeto'];
-				$id=$result['id'];
-				QRcode::png($id, $id.'.png', QR_ECLEVEL_L , 10);
+              while ($result = mysqli_fetch_array($query)) {
+                $nome = $result['nome_projeto'];
+                $id = $result['id'];
+                QRcode::png($id, $id . '.png', QR_ECLEVEL_L, 10);
                 echo "<tr>";
-                echo "<td>".$nome."</td>";
-				echo '<td><img src="';
-				echo $id.'.png" /></td>';
-                echo "</tr>";                
-            }
-            ?>
+                echo "<td>" . $nome . "</td>";
+                echo '<td><img src="';
+                echo $id . '.png" /></td>';
+                echo "</tr>";
+              }
+              ?>
           </table>
         </div>
       </div>
@@ -88,6 +88,12 @@ include "header.php";
 
 <script type="text/javascript" src="js/jquery.dataTables.min.js"></script>
 <script type="text/javascript" src="js/dataTables.buttons.min.js"></script>
+<script type="text/javascript" src="js/jszip.min.js"></script>
+<script type="text/javascript" src="js/pdfmake.min.js"></script>
+<script type="text/javascript" src="js/vfs_fonts.js"></script>
+<script type="text/javascript" src="js/vfs_fonts.js"></script>
+<script type="text/javascript" src="js/buttons.html5.min.js"></script>
+<script type="text/javascript" src="js/buttons.colVis.min.js"></script>
 <script type="text/javascript" src="js/buttons.print.min.js"></script>
 
 <script type="text/javascript" src="https://cdn.datatables.net/plug-ins/1.10.19/i18n/Portuguese-Brasil.json"></script>
@@ -100,21 +106,41 @@ include "header.php";
   $(document).ready(function() {
     $('#lista_qrcode').DataTable({
       dom: 'Bfrtip',
-      "columnDefs": [
-    { "width": "80%", "targets": 0 }
-  ],
-        buttons: [
-            {
-                extend: 'print',
-                exportOptions: {
-                stripHtml: false,
-                trim: false
-                }
-            }
-        ]
-      ,"columnDefs": [
-    { "width": "80%", "targets": 0 }
-  ],"language": {
+      buttons: [{
+          extend: "print",
+          text: 'Imprimir',
+          exportOptions: {
+            columns: ':visible',
+            stripHtml: false
+          }
+        },
+        {
+          extend: 'excelHtml5',
+          text: 'Excel',
+          orientation: 'landscape',
+          exportOptions: {
+            columns: ':visible'
+          }
+        },
+        {
+          extend: 'pdfHtml5',
+          text: 'PDF',
+          orientation: 'landscape',
+          exportOptions: {
+            columns: ':visible',
+            stripHtml: false
+          }
+        },
+        {
+          extend: 'colvis',
+          text: 'Esconder Colunas'
+        }
+      ],
+      "columnDefs": [{
+        "width": "80%",
+        "targets": 0
+      }],
+      "language": {
         "sEmptyTable": "Nenhum registro encontrado",
         "sInfo": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
         "sInfoEmpty": "Mostrando 0 até 0 de 0 registros",
