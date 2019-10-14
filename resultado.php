@@ -16,7 +16,7 @@ include "header.php";
     <div class="card shadow mb-4">
       <div class="card-header py-3">
         <center>
-          <h3 class="m-0 font-weight-bold text-primary">Listar Projetos</h3>
+          <h3 class="m-0 font-weight-bold text-primary">Resultado</h3>
         </center>
       </div>
       <div class="card-body">
@@ -24,27 +24,15 @@ include "header.php";
           <table class="table table-bordered table-striped " id="lista_qrcode" width="100%" cellspacing="0">
             <thead>
               <tr>
-                <th>Título Projeto</th>
-                <th>QrCode</th>
+                <th>Nome Projeto</th>
+                <th>Autor do Projeto</th>
+                <th>Orientador do Projeto</th>
+                <th>Apresentador do Projeto</th>
+                <th>Nota Final</th>
               </tr>
             </thead>
 
             <tbody>
-              <?php
-              mysqli_query($conexao, "SET character_set_results = 'utf8'");
-              $query = mysqli_query($conexao, "SELECT id,nome_projeto FROM PROJETOS");
-
-              while ($result = mysqli_fetch_array($query)) {
-                $nome = $result['nome_projeto'];
-                $id = $result['id'];
-                QRcode::png($id, $id . '.png', QR_ECLEVEL_L, 10);
-                echo "<tr>";
-                echo "<td>" . $nome . "</td>";
-                echo '<td><img src="';
-                echo $id . '.png" /></td>';
-                echo "</tr>";
-              }
-              ?>
           </table>
         </div>
       </div>
@@ -115,14 +103,27 @@ include "header.php";
           }
         },
         {
+          extend: 'excelHtml5',
+          text: 'Excel',
+          orientation: 'landscape',
+          exportOptions: {
+            columns: ':visible'
+          }
+        },
+        {
+          extend: 'pdfHtml5',
+          text: 'PDF',
+          orientation: 'landscape',
+          exportOptions: {
+            columns: ':visible',
+            stripHtml: false
+          }
+        },
+        {
           extend: 'colvis',
           text: 'Esconder Colunas'
         }
       ],
-      "columnDefs": [{
-        "width": "80%",
-        "targets": 0
-      }],
       "language": {
         "sEmptyTable": "Nenhum registro encontrado",
         "sInfo": "Mostrando de _START_ até _END_ de _TOTAL_ registros",

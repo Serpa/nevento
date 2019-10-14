@@ -32,8 +32,6 @@ projetos.categorias_projetos_id = categorias_projetos.id
 and projetos.areas_projeto_id = areas_projeto.id
 and projetos.subarea_projeto_id = subareas_projeto.id
 and projetos.orientadores_projeto_id = orientadores_projeto.id
-and projetos.apresentador_projeto = coautores_projeto.id
-or(projetos.apresentador_projeto = 0)
 GROUP BY projetos.nome_projeto";
 $resultado_consultaProjeto = mysqli_query($conexao, $result_consultaProjeto);
 ?>
@@ -204,9 +202,21 @@ GROUP BY coautores_projeto.nome_coautor
                           <p><label for="recipient-name" class="col-form-label">Categoria do Projeto:</label>
                             <input class="form-control" type="text" value="<?php echo $rows_consultaProjeto['nome_categoria']; ?>"></p>
                           <p><label for="recipient-name" class="col-form-label">Área do Projeto:</label>
-                            <input class="form-control" type="text" value="<?php echo $rows_consultaProjeto['nome_area']; ?>"></p>
-                          <p><label for="recipient-name" class="col-form-label">Subárea do Projeto:</label>
-                            <input class="form-control" type="text" value="<?php echo $rows_consultaProjeto['nome_subarea']; ?>"></p>
+                            <select class="form-control" name="areas_projeto_id" id="areas_projeto_id">
+                              <option value="">Selecione</option>
+                              <?php
+                                $result_areas_projeto = "SELECT * FROM areas_projeto";
+                                $resultado_areas_projeto = mysqli_query($conexao, $result_areas_projeto);
+                                while ($row_areas_projeto = mysqli_fetch_assoc($resultado_areas_projeto)) { ?>
+                                <option value="<?php echo $row_areas_projeto['id']; ?>"><?php echo $row_areas_projeto['nome_area']; ?></option> <?php
+                                                                                                                                                                            }
+                                                                                                                                                                            ?>
+                            </select><br>
+                            <p><label for="recipient-name" class="col-form-label">Subárea do Projeto:</label>
+                              <span class="carregando">Aguarde, carregando...</span>
+                              <select class="form-control" name="id_sub_categoria" id="id_sub_categoria">
+                                <option value="">Escolha a Subárea</option>
+                              </select></p>
                         </div>
                         <div class="modal-footer">
                           <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancelar</button>
@@ -274,7 +284,26 @@ GROUP BY coautores_projeto.nome_coautor
 <!-- Page level plugins -->
 <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
 
-
+<script type="text/javascript">
+$(function(){
+            $('#areas_projeto_id').change(function(){
+                if( $(this).val() ) {
+                    $('#id_sub_categoria').hide();
+                    $('.carregando').show();
+                    $.getJSON('subcategoria.php?search=',{areas_projeto_id: $(this).val(), ajax: 'true'}, function(j){
+                        var options = '<option value="">Escolha Subárea</option>'; 
+                        for (var i = 0; i < j.length; i++) {
+                            options += '<option value="' + j[i].id + '">' + j[i].nome_subarea + '</option>';
+                        }   
+                        $('#id_sub_categoria').html(options).show();
+                        $('.carregando').hide();
+                    });
+                } else {
+                    $('#id_sub_categoria').html('<option value="">– Escolha Subárea –</option>');
+                }
+            });
+        });
+</script>
 <script type="text/javascript">
   $(document).ready(function() {
     $('#lista-produto').DataTable({

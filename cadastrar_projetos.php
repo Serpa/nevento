@@ -75,7 +75,7 @@ include 'db.php';
                 <label class="badge badge-secondary">Instituição do autor:</label><br>
                 <input class="form-control" type="text" name="instituicao_autor" placeholder="Insira a instituição do autor do projeto">
                 <label class="badge badge-secondary">Palavras chave:</label><br>
-                <input class="form-control" type="text" name="palavraschave_projeto" placeholder="Insira as palavras-chave referente ao projeto">
+                <input class="form-control" type="text" name="palavraschave_projeto" pattern="[a-zA-Z\s]+$"  placeholder="Insira as palavras-chave referente ao projeto">
             </section>
 
 
@@ -132,6 +132,12 @@ include 'db.php';
     <script src="js/script.js"></script>
     <script src="js/states.js"></script>
     <script src="js/mascaras.js"></script>
+    <script>
+        $('input').on("input", function(e) {
+    $(this).val($(this).val().replace(/,/g, ""));
+});
+        </script>
+
 </body>
 
 </html>
