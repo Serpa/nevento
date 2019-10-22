@@ -9,7 +9,7 @@ include 'db.php';
 <div class="col-lg-6 mb-4">
     <div class="card shadow mb-4">
         <div class="card-header py-3">
-            <h4 class="m-0 font-weight-bold text-primary">Cadastro de Avaliador</h4>
+            <h4 class="m-0 font-weight-bold text-primary">Cadastro de Usuário</h4>
         </div>
         <div class="card-body">
 

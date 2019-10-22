@@ -58,7 +58,7 @@ function duplicarCampos(){
     var camposClonados = clone.getElementsByTagName('input');
     for(i=0; i<camposClonados.length;i++){
         if(i==1)
-        camposClonados[i].value = parseInt(t);
+        camposClonados[i].value = parseInt(t+1);
     else
         camposClonados[i].value = '';
     }

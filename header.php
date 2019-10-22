@@ -75,6 +75,7 @@ include "db.php";
           <div class="bg-white py-2 collapse-inner rounded">
             <a class="collapse-item" href="cadastrar_projetos.php">Cadastrar Projeto</a>
             <a class="collapse-item" href="lista_projetos.php">Listar Projetos</a>
+            <a class="collapse-item" href="listar_coautor.php">Listar Coautores</a>
             <a class="collapse-item" href="listar_qrcode.php">Listar QrCodes</a>
           </div>
         </div>

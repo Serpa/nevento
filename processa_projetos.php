@@ -2,6 +2,7 @@
 
 include 'db.php';
 session_start();
+mysqli_query($conexao, "SET NAMES utf8");
 
 #orientador
 $nome_orientador = $_POST['nome_orientador'];
@@ -55,7 +56,6 @@ $lastidProjeto = mysqli_insert_id($conexao);
 $nome_coautor = $_POST['Coautor'];
 
 $apresentador_projeto = $_POST['apresentador_projeto'];
-
 foreach ($nome_coautor as $key => $value) {
 	mysqli_query($conexao,"INSERT INTO coautores_projeto(nome_coautor) VALUES('$value')");
 
@@ -67,5 +67,5 @@ foreach ($nome_coautor as $key => $value) {
 
 	mysqli_query($conexao,"INSERT INTO projeto_coautores(id_projeto, id_coautores) VALUES ('$lastidProjeto', '$lastidCoautor')");
 }
+echo "<script>alert('Cadastro realizado com sucesso!');window.location='cadastrar_projetos.php'</script>";
 
-header('location:index.php?pagina=cadastrar_projetos');
