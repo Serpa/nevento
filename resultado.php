@@ -2,6 +2,10 @@
 include "db.php";
 include 'phpqrcode/qrlib.php';
 include "header.php";
+
+mysqli_query($conexao, "SET NAMES utf8");
+$result_final = "SELECT * FROM avaliadores";
+$resultado_final = mysqli_query($conexao, $result_final);
 ?>
 
 <link href="vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
@@ -32,6 +36,17 @@ include "header.php";
               </tr>
             </thead>
 
+            <?php while ($rows_resultado = mysqli_fetch_array($resultado_final)) {
+              ?>
+
+              <tr>
+                <td>teste</td>
+                <td>aa</td>
+                <td>bbb</td>
+                <td>ccc</td>
+                <td>ddd</td>
+              </tr>
+            <?php } ?>
             <tbody>
           </table>
         </div>
@@ -92,63 +107,63 @@ include "header.php";
 
 <script type="text/javascript">
   $(document).ready(function() {
-    $('#lista_qrcode').DataTable({
-      dom: 'Bfrtip',
-      buttons: [{
-          extend: "print",
-          text: 'Imprimir',
-          exportOptions: {
-            columns: ':visible',
-            stripHtml: false
+        $('#lista_qrcode').DataTable({
+          dom: 'Bfrtip',
+          buttons: [{
+              extend: "print",
+              text: 'Imprimir',
+              exportOptions: {
+                columns: ':visible',
+                stripHtml: false
+              }
+            },
+            {
+              extend: 'excelHtml5',
+              text: 'Excel',
+              orientation: 'landscape',
+              exportOptions: {
+                columns: ':visible'
+              }
+            },
+            {
+              extend: 'pdfHtml5',
+              text: 'PDF',
+              orientation: 'landscape',
+              exportOptions: {
+                columns: ':visible',
+                stripHtml: false
+              }
+            },
+            {
+              extend: 'colvis',
+              text: 'Esconder Colunas'
+            }
+          ],
+          "language": {
+            "sEmptyTable": "Nenhum registro encontrado",
+            "sInfo": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+            "sInfoEmpty": "Mostrando 0 até 0 de 0 registros",
+            "sInfoFiltered": "(Filtrados de _MAX_ registros)",
+            "sInfoPostFix": "",
+            "sInfoThousands": ".",
+            "sLengthMenu": "_MENU_ resultados por página",
+            "sLoadingRecords": "Carregando...",
+            "sProcessing": "Processando...",
+            "sZeroRecords": "Nenhum registro encontrado",
+            "sSearch": "Pesquisar",
+            "oPaginate": {
+              "sNext": "Próximo",
+              "sPrevious": "Anterior",
+              "sFirst": "Primeiro",
+              "sLast": "Último"
+            },
+            "oAria": {
+              "sSortAscending": ": Ordenar colunas de forma ascendente",
+              "sSortDescending": ": Ordenar colunas de forma descendente"
+            }
           }
-        },
-        {
-          extend: 'excelHtml5',
-          text: 'Excel',
-          orientation: 'landscape',
-          exportOptions: {
-            columns: ':visible'
-          }
-        },
-        {
-          extend: 'pdfHtml5',
-          text: 'PDF',
-          orientation: 'landscape',
-          exportOptions: {
-            columns: ':visible',
-            stripHtml: false
-          }
-        },
-        {
-          extend: 'colvis',
-          text: 'Esconder Colunas'
-        }
-      ],
-      "language": {
-        "sEmptyTable": "Nenhum registro encontrado",
-        "sInfo": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
-        "sInfoEmpty": "Mostrando 0 até 0 de 0 registros",
-        "sInfoFiltered": "(Filtrados de _MAX_ registros)",
-        "sInfoPostFix": "",
-        "sInfoThousands": ".",
-        "sLengthMenu": "_MENU_ resultados por página",
-        "sLoadingRecords": "Carregando...",
-        "sProcessing": "Processando...",
-        "sZeroRecords": "Nenhum registro encontrado",
-        "sSearch": "Pesquisar",
-        "oPaginate": {
-          "sNext": "Próximo",
-          "sPrevious": "Anterior",
-          "sFirst": "Primeiro",
-          "sLast": "Último"
-        },
-        "oAria": {
-          "sSortAscending": ": Ordenar colunas de forma ascendente",
-          "sSortDescending": ": Ordenar colunas de forma descendente"
-        }
-      }
-    });
-  });
+        });
+        });
 </script>
 
 

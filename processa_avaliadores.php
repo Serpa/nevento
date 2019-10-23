@@ -19,5 +19,5 @@ exit();
     mysqli_query($conexao, "INSERT INTO avaliadores(nome_avaliador,email_avaliador,fone_avaliador,instituicao_avaliador,usuario_avaliador,senha_avaliador) VALUES('$nome_avaliador','$email_avaliador','$fone_avaliador','$instituicao_avaliador','$usuario_avaliador','$senha_avaliador')");
  echo "<script>alert('Cadastro realizado com sucesso!');window.location='cadastrar_avaliador.php'</script>";
 }
-$con->close();
+$conexao->close();
 ?>

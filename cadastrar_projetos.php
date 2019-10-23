@@ -52,8 +52,8 @@ mysqli_query($conexao, "SET NAMES utf8");
                             $resultado_categorias_projeto = mysqli_query($conexao, $result_categorias_projeto);
                             while ($row_categorias_projeto = mysqli_fetch_assoc($resultado_categorias_projeto)) { ?>
                                 <option value="<?php echo utf8_encode($row_categorias_projeto['id']); ?>"><?php echo $row_categorias_projeto['nome_categoria']; ?></option> <?php
-                                                                                                                                                                                            }
-                                                                                                                                                                                            ?>
+                                                                                                                                                                            }
+                                                                                                                                                                            ?>
                         </select>
                     </div>
                 </div>
@@ -69,8 +69,8 @@ mysqli_query($conexao, "SET NAMES utf8");
                             $resultado_areas_projeto = mysqli_query($conexao, $result_areas_projeto);
                             while ($row_areas_projeto = mysqli_fetch_assoc($resultado_areas_projeto)) { ?>
                                 <option value="<?php echo $row_areas_projeto['id']; ?>"><?php echo $row_areas_projeto['nome_area']; ?></option> <?php
-                                                                                                                                                                            }
-                                                                                                                                                                            ?>
+                                                                                                                                                }
+                                                                                                                                                ?>
                         </select>
                     </div>
                 </div>
@@ -113,10 +113,49 @@ mysqli_query($conexao, "SET NAMES utf8");
                 </div>
 
                 <div class="item form-group">
+                    <label class="control-label col-md-6 col-sm-3 col-xs-12" for="nome">Estado do autor:
+                    </label>
+                    <div class="col-md-10 col-sm-6 col-xs-12">
+                        <select class="form-control col-md-10 col-xs-12" id="estado_autor" name="estado_autor" onchange="buscaCidades(this.value)" required="required">
+                            <option value="">Selecione o Estado</option>
+                            <option value="AC">Acre</option>
+                            <option value="AL">Alagoas</option>
+                            <option value="AM">Amazonas</option>
+                            <option value="AP">Amapá</option>
+                            <option value="BA">Bahia</option>
+                            <option value="CE">Ceará</option>
+                            <option value="DF">Distrito Federal</option>
+                            <option value="ES">Espírito Santo</option>
+                            <option value="GO">Goiás</option>
+                            <option value="MA">Maranhão</option>
+                            <option value="MG">Minas Gerais</option>
+                            <option value="MS">Mato Grosso do Sul</option>
+                            <option value="MT">Mato Grosso</option>
+                            <option value="PA">Pará</option>
+                            <option value="PB">Paraíba</option>
+                            <option value="PE">Pernambuco</option>
+                            <option value="PI">Piauí</option>
+                            <option value="PR">Paraná</option>
+                            <option value="RJ">Rio de Janeiro</option>
+                            <option value="RN">Rio Grande do Norte</option>
+                            <option value="RO">Rondônia</option>
+                            <option value="RR">Roraima</option>
+                            <option value="RS">Rio Grande do Sul</option>
+                            <option value="SC">Santa Catarina</option>
+                            <option value="SE">Sergipe</option>
+                            <option value="SP">São Paulo</option>
+                            <option value="TO">Tocantins</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="item form-group">
                     <label class="control-label col-md-6 col-sm-3 col-xs-12" for="nome">Cidade do autor:
                     </label>
                     <div class="col-md-10 col-sm-6 col-xs-12">
-                        <input class="form-control col-md-10 col-xs-12" name="cidade_autor" placeholder="Insira a cidade do autor do projeto" required="required" type="text">
+                        <select class="form-control col-md-10 col-xs-12" id="cidade_autor" name="cidade_autor" required="required">
+                            <option value="">Selecione a Cidade</option>
+                        </select>
                     </div>
                 </div>
 
@@ -237,7 +276,6 @@ mysqli_query($conexao, "SET NAMES utf8");
 <script src="js/jquery.steps.js"></script>
 <script src="js/script.js"></script>
 <script src="js/states.js"></script>
-<script src="js/mascaras.js"></script>
 <script>
     $('input').on("input", function(e) {
         $(this).val($(this).val().replace(/,/g, ""));

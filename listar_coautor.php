@@ -42,6 +42,7 @@ $resultado_coautor = mysqli_query($conexao, $result_coautor);
                                     <td>
                                         <a class='btn-sm btn-warning' href="#" data-toggle="modal" data-target="#editmodal<?php echo $rows_coautor['id']; ?>"><i class='fas fa-edit'></i></a>
                                         <a class='btn-sm btn-danger' href="del_coautor.php?id=<?php echo $rows_coautor['id']; ?>" onclick="return confirm('Você tem certeza que deseja deletar esse coautor?');"><i class='fas fa-trash-alt'></i></a>
+                                        <a class='btn-sm btn-success' href="#" data-toggle="modal" data-target="#addmodal"><i class="fas fa-plus"></i></a>
                                     </td>
                                     <!-- Edit Modal-->
                                     <div class="modal fade" id="editmodal<?php echo $rows_coautor['id']; ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -58,9 +59,9 @@ $resultado_coautor = mysqli_query($conexao, $result_coautor);
                                                 <div class="modal-body">
                                                     <form action="atualiza_coautor.php" method="POST" id="form<?php echo $rows_coautor['id']; ?>" class="form-horizontal form-label-left">
 
-                                                    <div class="item form-group">
+                                                        <div class="item form-group">
                                                             <div class="col-md-10 col-sm-6 col-xs-12">
-                                                                <input class="form-control col-md-10 col-xs-12" name="id_coautor"  type="hidden" value="<?php echo $rows_coautor['id']; ?>">
+                                                                <input class="form-control col-md-10 col-xs-12" name="id_coautor" type="hidden" value="<?php echo $rows_coautor['id']; ?>">
                                                             </div>
                                                         </div>
 
@@ -75,6 +76,55 @@ $resultado_coautor = mysqli_query($conexao, $result_coautor);
                                                 </div>
                                                 <div class="modal-footer">
                                                     <button class="btn btn-primary" form="form<?php echo $rows_coautor['id']; ?>" type="submit">Salvar</button>
+                                                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancelar</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Fim Modal -->
+
+                                    <!-- ADD Modal-->
+                                    <div class="modal fade" id="addmodal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-xl" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="exampleModalLabel"><strong>
+                                                            <font color="#3c6178"> Cadastrar Novo Coautor</font>
+                                                        </strong></h5>
+                                                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">×</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form action="processa_coautor.php" method="POST" id="formadd" class="form-horizontal form-label-left">
+
+                                                        <div class="item form-group">
+                                                            <label class="control-label col-md-6 col-sm-3 col-xs-12" for="nome">Projetos:
+                                                            </label>
+                                                            <div class="col-md-10 col-sm-6 col-xs-12">
+                                                                <select class="form-control col-md-10 col-xs-12" name="projeto" required>
+                                                                    <option value="">Selecione o Projeto</option>
+                                                                    <?php
+                                                                        $result_projeto = "SELECT * FROM projetos";
+                                                                        $resultado_projeto = mysqli_query($conexao, $result_projeto);
+                                                                        while ($row_projeto = mysqli_fetch_assoc($resultado_projeto)) { ?>
+                                                                        <option value="<?php echo utf8_encode($row_projeto['id']); ?>"><?php echo $row_projeto['nome_projeto']; ?></option> <?php
+                                                                                                                                                                                                }
+                                                                                                                                                                                                ?>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+                                                        <div class="item form-group">
+                                                            <label class="control-label col-md-6 col-sm-3 col-xs-12" for="nome">Nome Coautor
+                                                            </label>
+                                                            <div class="col-md-10 col-sm-6 col-xs-12">
+                                                                <input class="form-control col-md-10 col-xs-12" name="nome_coautor" required="required" type="text">
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button class="btn btn-success" form="formadd" type="submit">Cadastrar</button>
                                                     <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancelar</button>
                                                 </div>
                                             </div>
@@ -175,6 +225,10 @@ $resultado_coautor = mysqli_query($conexao, $result_coautor);
                     text: 'Esconder Colunas'
                 }
             ],
+            "columnDefs": [{
+                "width": "15%",
+                "targets": 1
+            }],
             "language": {
                 "sEmptyTable": "Nenhum registro encontrado",
                 "sInfo": "Mostrando de _START_ até _END_ de _TOTAL_ registros",

@@ -17,7 +17,7 @@ projetos.apresentador_projeto,
 projetos.palavraschave_projeto,
 categorias_projetos.nome_categoria,
 orientadores_projeto.nome_orientador,
-orientadores_projeto.id,
+orientadores_projeto.id AS idori,
 areas_projeto.nome_area,
 subareas_projeto.nome_subarea,
 categorias_projetos.id AS catid,
@@ -191,7 +191,7 @@ GROUP BY coautores_projeto.nome_coautor
                         </div>
                         <div class="modal-body">
 
-                          <form action="altera_projetos.php" id="edita<?php echo $rows_consultaProjeto['projid']; ?>" method="POST" class="form-horizontal form-label-left">
+                          <form action="atualiza_projeto.php" id="edita<?php echo $rows_consultaProjeto['projid']; ?>" method="POST" class="form-horizontal form-label-left">
 
                             <h3>Projeto</h3>
                             <div class="item form-group">
@@ -233,7 +233,7 @@ GROUP BY coautores_projeto.nome_coautor
                               <label class="control-label col-md-6 col-sm-3 col-xs-12" for="nome">Área do Projeto:
                               </label>
                               <div class="col-md-10 col-sm-6 col-xs-12">
-                                <select class="form-control col-md-10 col-xs-12" name="areas_projeto_id" id="areas_projeto_id">
+                                <select class="form-control col-md-10 col-xs-12" name="areas_projeto_id" id="areas_projeto_id" required>
                                   <option value="">Selecione</option>
                                   <?php
                                     $result_areas_projeto = "SELECT * FROM areas_projeto";
@@ -253,7 +253,7 @@ GROUP BY coautores_projeto.nome_coautor
                               </label>
                               <div class="col-md-10 col-sm-6 col-xs-12">
                                 <span class="carregando">Aguarde, carregando...</span>
-                                <select class="form-control col-md-10 col-xs-12" name="id_sub_categoria" id="id_sub_categoria">
+                                <select class="form-control col-md-10 col-xs-12" name="id_sub_categoria" id="id_sub_categoria" required>
                                   <option value="">Escolha a Subárea</option>
                                 </select>
                               </div>
@@ -269,7 +269,7 @@ GROUP BY coautores_projeto.nome_coautor
 
                             <div class="item form-group">
                               <div class="col-md-10 col-sm-6 col-xs-12">
-                                <input class="form-control col-md-10 col-xs-12" name="id_projeto" type="hidden" value="<?php echo $rows_consultaProjeto['id']; ?>">
+                                <input class="form-control col-md-10 col-xs-12" name="id_projeto" type="hidden" value="<?php echo $rows_consultaProjeto['projid']; ?>">
                               </div>
                             </div>
 
@@ -349,7 +349,7 @@ GROUP BY coautores_projeto.nome_coautor
 
                             <div class="item form-group">
                               <div class="col-md-10 col-sm-6 col-xs-12">
-                                <input class="form-control col-md-10 col-xs-12" name="id_orientador" type="hidden" value="<?php echo $resultado_Orientador['id']; ?>">
+                                <input class="form-control col-md-10 col-xs-12" name="id_orientador" type="hidden" value="<?php echo $rows_consultaProjeto['idori']; ?>">
                               </div>
                             </div>
 
@@ -393,14 +393,6 @@ GROUP BY coautores_projeto.nome_coautor
                               </div>
                             </div>
 
-                            <div class="item form-group">
-                              <label class="control-label col-md-6 col-sm-3 col-xs-12" for="nome">Instituição do Orientador:
-                              </label>
-                              <div class="col-md-10 col-sm-6 col-xs-12">
-                                <input class="form-control col-md-10 col-xs-12" value="<?php echo $rows_consultaProjeto['instituicao_orientador']; ?>" name="instituicao_orientador" placeholder="Insira a instituição do orientador" required="required" type="text">
-                              </div>
-                            </div>
-
                         </div>
 
                         <div class="modal-footer">
@@ -415,7 +407,7 @@ GROUP BY coautores_projeto.nome_coautor
                 </tr>
               <?php } ?>
             </tbody>
-          </table>
+          </table>          
         </div>
       </div>
     </div>
@@ -468,6 +460,8 @@ GROUP BY coautores_projeto.nome_coautor
 
 <script type="text/javascript" src="https://cdn.datatables.net/plug-ins/1.10.19/i18n/Portuguese-Brasil.json"></script>
 
+<script src="js/mascaras.js"></script>
+<script src="js/script.js"></script>
 <!-- Page level plugins -->
 <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
 
@@ -504,7 +498,7 @@ GROUP BY coautores_projeto.nome_coautor
         className: 'noVis'
       }],
       "columnDefs": [{
-        "width": "8%",
+        "width": "10%",
         "targets": 7
       }],
       buttons: [{
@@ -582,6 +576,16 @@ GROUP BY coautores_projeto.nome_coautor
       }
     });
   });
+</script>
+
+<script>
+    $('input').on("input", function(e) {
+        $(this).val($(this).val().replace(/,/g, ""));
+    });
+
+    $('#plchave').on("input", function(e) {
+        $(this).val($(this).val().replace(/ /g, ";"));
+    });
 </script>
 
 </body>

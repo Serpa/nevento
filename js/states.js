@@ -5726,8 +5726,8 @@ var json_cidades ={
   };
   
 function buscaCidades(e){
-    document.querySelector("#cidade").innerHTML = '';
-    var cidade_select = document.querySelector("#cidade");
+    document.querySelector("#cidade_autor").innerHTML = '';
+    var cidade_select = document.querySelector("#cidade_autor");
  
     var num_estados = json_cidades.estados.length;
     var j_index = -1;
@@ -5749,7 +5749,7 @@ function buscaCidades(e){
           cidade_select.appendChild(cid_opts);
        });
     }else{
-       document.querySelector("#cidade").innerHTML = '';
+       document.querySelector("#cidade_autor").innerHTML = '';
     }
  }
 

@@ -16,5 +16,5 @@ exit();
     mysqli_query($conexao, "INSERT INTO usuarios_pesq(usuario_pesq,senha_pesq,nivel_pesq) VALUES('$usuario_pesq','$senha_pesq','$nivel_pesq')");
  echo "<script>alert('Cadastro realizado com sucesso!');window.location='cadastrar_pesquisa.php'</script>";
 }
-$con->close();
+$conexao->close();
 ?>
