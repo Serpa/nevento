@@ -8,7 +8,7 @@
 	while ($row_sub_cat = mysqli_fetch_assoc($resultado_sub_cat) ) {
 		$sub_categorias_post[] = array(
 			'id'	=> $row_sub_cat['id'],
-			'nome_subarea' => utf8_encode($row_sub_cat['nome_subarea']),
+			'nome_subarea' => $row_sub_cat['nome_subarea'],
 		);
 	}
 	

@@ -51,7 +51,7 @@ include "db.php";
                   </div>
                   <form class="user" action="valida.php" method="POST">
                     <div class="form-group">
-                      <input type="text" class="form-control form-control-user" name="usuario_pesq" placeholder="">
+                      <input type="text" class="form-control form-control-user" name="usuario_pesq" placeholder="Usuário">
                     </div>
                     <div class="form-group">
                       <input type="password" class="form-control form-control-user" id="exampleInputPassword" name="senha_pesq" placeholder="Senha">

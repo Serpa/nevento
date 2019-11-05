@@ -4,8 +4,6 @@ include 'phpqrcode/qrlib.php';
 include "header.php";
 
 mysqli_query($conexao, "SET NAMES utf8");
-$result_final = "SELECT * FROM avaliadores";
-$resultado_final = mysqli_query($conexao, $result_final);
 ?>
 
 <link href="vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
@@ -29,6 +27,7 @@ $resultado_final = mysqli_query($conexao, $result_final);
             <thead>
               <tr>
                 <th>Nome Projeto</th>
+                <th>Categoria</th>
                 <th>Autor do Projeto</th>
                 <th>Orientador do Projeto</th>
                 <th>Apresentador do Projeto</th>
@@ -36,17 +35,71 @@ $resultado_final = mysqli_query($conexao, $result_final);
               </tr>
             </thead>
 
-            <?php while ($rows_resultado = mysqli_fetch_array($resultado_final)) {
-              ?>
-
-              <tr>
-                <td>teste</td>
-                <td>aa</td>
-                <td>bbb</td>
-                <td>ccc</td>
-                <td>ddd</td>
-              </tr>
-            <?php } ?>
+            <?php
+            $query = mysqli_query($conexao, "SELECT 
+            avaliacoes.projetos_id,
+            projetos.nome_projeto,
+            projetos.titulo_projeto,
+            orientadores_projeto.id,
+            orientadores_projeto.nome_orientador,
+            projetos.autor_projeto,
+            projetos.orientadores_projeto_id,
+            projetos.apresentador_projeto,
+            categorias_projetos.id,
+            categorias_projetos.nome_categoria
+            
+         FROM 
+            avaliacoes,projetos,orientadores_projeto,coautores_projeto,categorias_projetos 
+            WHERE avaliacoes.projetos_id = projetos.id AND projetos.categorias_projetos_id = categorias_projetos.id AND projetos.orientadores_projeto_id = orientadores_projeto.id AND avaliacoes.projetos_id IN (SELECT avaliacoes.projetos_id FROM avaliacoes GROUP BY avaliacoes.projetos_id) GROUP BY avaliacoes.projetos_id");
+            while ($result = mysqli_fetch_array($query)) {
+              $query2 = mysqli_query($conexao, "SELECT 
+   avaliacoes.projetos_id, 
+   (SUM(avaliacoes.q11)/count(avaliacoes.avaliadores_id_avaliador)+
+   SUM(avaliacoes.q12)/count(avaliacoes.avaliadores_id_avaliador)+
+   SUM(avaliacoes.q13)/count(avaliacoes.avaliadores_id_avaliador)+
+   SUM(avaliacoes.q14)/count(avaliacoes.avaliadores_id_avaliador)+
+   SUM(avaliacoes.q21)/count(avaliacoes.avaliadores_id_avaliador)+
+   SUM(avaliacoes.q22)/count(avaliacoes.avaliadores_id_avaliador)+
+   SUM(avaliacoes.q23)/count(avaliacoes.avaliadores_id_avaliador)+
+   SUM(avaliacoes.q24)/count(avaliacoes.avaliadores_id_avaliador)+
+   SUM(avaliacoes.q25)/count(avaliacoes.avaliadores_id_avaliador)+
+   SUM(avaliacoes.q31)/count(avaliacoes.avaliadores_id_avaliador)+
+   SUM(avaliacoes.q32)/count(avaliacoes.avaliadores_id_avaliador)+
+   SUM(avaliacoes.q33)/count(avaliacoes.avaliadores_id_avaliador)+
+   SUM(avaliacoes.q34)/count(avaliacoes.avaliadores_id_avaliador))/13
+   AS MEDIA   
+FROM 
+   avaliacoes
+   WHERE avaliacoes.projetos_id = '" . $result['projetos_id'] . "'");
+              $result2 = mysqli_fetch_array($query2);
+              $result2['MEDIA'] = number_format($result2['MEDIA'], 2, '.', '');
+              if($result['apresentador_projeto']==0)
+              {echo "<tr>
+                <td>" . ($result['nome_projeto']) . "</td>
+                <td>" . ($result['nome_categoria']) . "</td>
+                <td>" . ($result['autor_projeto']) . "</td>
+                <td>" . ($result['nome_orientador']) . "</td>
+                <td>" . ($result['autor_projeto']) . "</td>
+                <td>" . ($result2['MEDIA']) . "</td>
+                </tr>";}else{$apresentador = mysqli_query($conexao,"SELECT
+                  *
+                  FROM
+                  coautores_projeto
+                  WHERE
+                  id = '" . $result['apresentador_projeto'] . "'");
+                  $result_apresentador = mysqli_fetch_array($apresentador);
+                  echo "<tr>
+                <td>" . ($result['nome_projeto']) . "</td>
+                <td>" . ($result['nome_categoria']) . "</td>
+                <td>" . ($result['autor_projeto']) . "</td>
+                <td>" . ($result['nome_orientador']) . "</td>
+                <td>" . ($result_apresentador['nome_coautor']) . "</td>
+                <td>" . ($result2['MEDIA']) . "</td>
+                </tr>";
+                }
+              
+            }
+            ?>
             <tbody>
           </table>
         </div>
@@ -107,63 +160,63 @@ $resultado_final = mysqli_query($conexao, $result_final);
 
 <script type="text/javascript">
   $(document).ready(function() {
-        $('#lista_qrcode').DataTable({
-          dom: 'Bfrtip',
-          buttons: [{
-              extend: "print",
-              text: 'Imprimir',
-              exportOptions: {
-                columns: ':visible',
-                stripHtml: false
-              }
-            },
-            {
-              extend: 'excelHtml5',
-              text: 'Excel',
-              orientation: 'landscape',
-              exportOptions: {
-                columns: ':visible'
-              }
-            },
-            {
-              extend: 'pdfHtml5',
-              text: 'PDF',
-              orientation: 'landscape',
-              exportOptions: {
-                columns: ':visible',
-                stripHtml: false
-              }
-            },
-            {
-              extend: 'colvis',
-              text: 'Esconder Colunas'
-            }
-          ],
-          "language": {
-            "sEmptyTable": "Nenhum registro encontrado",
-            "sInfo": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
-            "sInfoEmpty": "Mostrando 0 até 0 de 0 registros",
-            "sInfoFiltered": "(Filtrados de _MAX_ registros)",
-            "sInfoPostFix": "",
-            "sInfoThousands": ".",
-            "sLengthMenu": "_MENU_ resultados por página",
-            "sLoadingRecords": "Carregando...",
-            "sProcessing": "Processando...",
-            "sZeroRecords": "Nenhum registro encontrado",
-            "sSearch": "Pesquisar",
-            "oPaginate": {
-              "sNext": "Próximo",
-              "sPrevious": "Anterior",
-              "sFirst": "Primeiro",
-              "sLast": "Último"
-            },
-            "oAria": {
-              "sSortAscending": ": Ordenar colunas de forma ascendente",
-              "sSortDescending": ": Ordenar colunas de forma descendente"
-            }
+    $('#lista_qrcode').DataTable({
+      dom: 'Bfrtip',
+      buttons: [{
+          extend: "print",
+          text: 'Imprimir',
+          exportOptions: {
+            columns: ':visible',
+            stripHtml: false
           }
-        });
-        });
+        },
+        {
+          extend: 'excelHtml5',
+          text: 'Excel',
+          orientation: 'landscape',
+          exportOptions: {
+            columns: ':visible'
+          }
+        },
+        {
+          extend: 'pdfHtml5',
+          text: 'PDF',
+          orientation: 'landscape',
+          exportOptions: {
+            columns: ':visible',
+            stripHtml: false
+          }
+        },
+        {
+          extend: 'colvis',
+          text: 'Esconder Colunas'
+        }
+      ],"order": [[ 5, "desc" ]],
+      "language": {
+        "sEmptyTable": "Nenhum registro encontrado",
+        "sInfo": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+        "sInfoEmpty": "Mostrando 0 até 0 de 0 registros",
+        "sInfoFiltered": "(Filtrados de _MAX_ registros)",
+        "sInfoPostFix": "",
+        "sInfoThousands": ".",
+        "sLengthMenu": "_MENU_ resultados por página",
+        "sLoadingRecords": "Carregando...",
+        "sProcessing": "Processando...",
+        "sZeroRecords": "Nenhum registro encontrado",
+        "sSearch": "Pesquisar",
+        "oPaginate": {
+          "sNext": "Próximo",
+          "sPrevious": "Anterior",
+          "sFirst": "Primeiro",
+          "sLast": "Último"
+        },
+        "oAria": {
+          "sSortAscending": ": Ordenar colunas de forma ascendente",
+          "sSortDescending": ": Ordenar colunas de forma descendente"
+        }
+      }
+    });
+  });
 </script>
 
 
