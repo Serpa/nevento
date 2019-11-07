@@ -28,7 +28,6 @@ $instituicao_autor = $_POST['instituicao_autor'];
 $palavraschave_projeto = $_POST['palavraschave_projeto'];
 $categorias_projetos_id = $_POST['categorias_projetos_id'];
 $areas_projeto_id = $_POST['areas_projeto_id'];
-$id_sub_categoria = $_POST['id_sub_categoria'];
 $usuarios_pesq_id_pesq = $_SESSION['usuario_pesq_id'];
 $apresentador_projeto = $_POST['apresentador_projeto'];
 
@@ -46,8 +45,7 @@ palavraschave_projeto = '$palavraschave_projeto',
 categorias_projetos_id = $categorias_projetos_id,
 orientadores_projeto_id = $id_orientador,
 usuarios_pesq_id_pesq = $usuarios_pesq_id_pesq,
-areas_projeto_id = $areas_projeto_id,
-subarea_projeto_id = $id_sub_categoria
+areas_projeto_id = $areas_projeto_id
 WHERE id =$id_projeto");
 
 echo "<script>alert('Projeto atualizado com sucesso!');window.location='lista_projetos.php'</script>";

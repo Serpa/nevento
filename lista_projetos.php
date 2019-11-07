@@ -66,7 +66,7 @@ $resultado_consultaProjeto = mysqli_query($conexao, $result_consultaProjeto);
       </div>
       <div class="card-body">
         <div class="table-responsive">
-          <table class="table table-bordered" id="lista-produto" width="100%" cellspacing="0">
+          <table class="table table-bordered" id="lista-projeto" width="100%" cellspacing="0">
             <thead>
               <tr>
                 <th>Nome</th>
@@ -75,7 +75,6 @@ $resultado_consultaProjeto = mysqli_query($conexao, $result_consultaProjeto);
                 <th>Categoria</th>
                 <th>Orientador</th>
                 <th>Área</th>
-                <th>Subárea</th>
                 <th>Ações</th>
               </tr>
             </thead>
@@ -92,7 +91,6 @@ $resultado_consultaProjeto = mysqli_query($conexao, $result_consultaProjeto);
                   <td><?php echo $rows_consultaProjeto['nome_categoria']; ?></td>
                   <td><?php echo $rows_consultaProjeto['nome_orientador']; ?></td>
                   <td><?php echo $rows_consultaProjeto['nome_area']; ?></td>
-                  <td><?php echo $rows_consultaProjeto['nome_subarea']; ?></td>
 
                   <td>
                     <a class='btn-sm btn-success' href="#" data-toggle="modal" data-target="#infomodal<?php echo $rows_consultaProjeto['projid']; ?>"><i class="fas fa-info "></i></a>
@@ -167,8 +165,6 @@ GROUP BY coautores_projeto.nome_coautor
                             <input class="form-control" type="text" disabled value="<?php echo $rows_consultaProjeto['nome_categoria']; ?>"></p>
                           <p><label for="recipient-name" class="col-form-label">Área do Projeto:</label>
                             <input class="form-control" type="text" disabled value="<?php echo $rows_consultaProjeto['nome_area']; ?>"></p>
-                          <p><label for="recipient-name" class="col-form-label">Subárea do Projeto:</label>
-                            <input class="form-control" type="text" disabled value="<?php echo $rows_consultaProjeto['nome_subarea']; ?>"></p>
                         </div>
                         <div class="modal-footer">
                           <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancelar</button>
@@ -244,17 +240,6 @@ GROUP BY coautores_projeto.nome_coautor
                                                                                                 } ?>><?php echo $row_areas_projeto['nome_area']; ?></option> <?php
                                                                                                                                                                 }
                                                                                                                                                                 ?>
-                                </select>
-                              </div>
-                            </div>
-
-                            <div class="item form-group">
-                              <label class="control-label col-md-6 col-sm-3 col-xs-12" for="nome">Subárea do Projeto:
-                              </label>
-                              <div class="col-md-10 col-sm-6 col-xs-12">
-                                <span class="carregando">Aguarde, carregando...</span>
-                                <select class="form-control col-md-10 col-xs-12" name="id_sub_categoria" id="id_sub_categoria" required>
-                                  <option value="">Escolha a Subárea</option>
                                 </select>
                               </div>
                             </div>
@@ -407,7 +392,18 @@ GROUP BY coautores_projeto.nome_coautor
                 </tr>
               <?php } ?>
             </tbody>
-          </table>          
+            <tfoot>
+              <tr>
+                <th>Nome</th>
+                <th>Autor</th>
+                <th>Instituição</th>
+                <th>Categoria</th>
+                <th>Orientador</th>
+                <th>Área</th>
+                <th>Ações</th>
+              </tr>
+            </tfoot>
+          </table>
         </div>
       </div>
     </div>
@@ -466,42 +462,33 @@ GROUP BY coautores_projeto.nome_coautor
 <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
 
 
-<script type="text/javascript">
-  $(function() {
-    $('#areas_projeto_id').change(function() {
-      if ($(this).val()) {
-        $('#id_sub_categoria').hide();
-        $('.carregando').show();
-        $.getJSON('subcategoria.php?search=', {
-          areas_projeto_id: $(this).val(),
-          ajax: 'true'
-        }, function(j) {
-          var options = '<option value="">Escolha Subárea</option>';
-          for (var i = 0; i < j.length; i++) {
-            options += '<option value="' + j[i].id + '">' + j[i].nome_subarea + '</option>';
-          }
-          $('#id_sub_categoria').html(options).show();
-          $('.carregando').hide();
-        });
-      } else {
-        $('#id_sub_categoria').html('<option value="">– Escolha Subárea –</option>');
-      }
-    });
-  });
-</script>
-<script type="text/javascript">
+<script>
   $(document).ready(function() {
-    $('#lista-produto').DataTable({
-      dom: 'Bfrtip',
+    $('#lista-projeto').DataTable({
+      initComplete: function() {
+        this.api().columns([2,3,5]).every(function() {
+          var column = this;
+          var select = $('<select><option value="">Mostrar todos</option></select>')
+            .appendTo($(column.footer()).empty())
+            .on('change', function() {
+              var val = $.fn.dataTable.util.escapeRegex(
+                $(this).val()
+              );
+
+              column
+                .search(val ? '^' + val + '$' : '', true, false)
+                .draw();
+            });
+
+          column.data().unique().sort().each(function(d, j) {
+            select.append('<option value="' + d + '">' + d + '</option>')
+          });
+        });
+      },dom: 'Bfrtip',
       columnDefs: [{
         targets: 1,
         className: 'noVis'
-      }],
-      "columnDefs": [{
-        "width": "10%",
-        "targets": 7
-      }],
-      buttons: [{
+      }],buttons: [{
           extend: "print",
           text: 'Imprimir',
           exportOptions: {
@@ -579,13 +566,13 @@ GROUP BY coautores_projeto.nome_coautor
 </script>
 
 <script>
-    $('input').on("input", function(e) {
-        $(this).val($(this).val().replace(/,/g, ""));
-    });
+  $('input').on("input", function(e) {
+    $(this).val($(this).val().replace(/,/g, ""));
+  });
 
-    $('#plchave').on("input", function(e) {
-        $(this).val($(this).val().replace(/ /g, ";"));
-    });
+  $('#plchave').on("input", function(e) {
+    $(this).val($(this).val().replace(/ /g, ";"));
+  });
 </script>
 
 </body>

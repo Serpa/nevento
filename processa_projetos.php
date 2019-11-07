@@ -30,7 +30,6 @@ $instituicao_autor = $_POST['instituicao_autor'];
 $palavraschave_projeto = $_POST['palavraschave_projeto'];
 $categorias_projetos_id = $_POST['categorias_projetos_id'];
 $areas_projeto_id = $_POST['areas_projeto_id'];
-$id_sub_categoria = $_POST['id_sub_categoria'];
 $usuarios_pesq_id_pesq = $_SESSION['usuario_pesq_id'];
 
 $insertProjetos = mysqli_query($conexao, "INSERT INTO projetos
@@ -47,10 +46,9 @@ palavraschave_projeto,
 categorias_projetos_id,
 orientadores_projeto_id,
 usuarios_pesq_id_pesq,
-areas_projeto_id,
-subarea_projeto_id)
+areas_projeto_id)
 VALUES
-('$nome_projeto','$titulo_projeto','$autor_projeto','$endereco_autor','$cidade_autor','$email_autor','$fone_autor','$instituicao_autor',0,'$palavraschave_projeto',$categorias_projetos_id,$lastidOrientador,$usuarios_pesq_id_pesq,$areas_projeto_id,$id_sub_categoria)");
+('$nome_projeto','$titulo_projeto','$autor_projeto','$endereco_autor','$cidade_autor','$email_autor','$fone_autor','$instituicao_autor',0,'$palavraschave_projeto',$categorias_projetos_id,$lastidOrientador,$usuarios_pesq_id_pesq,$areas_projeto_id)");
 
 $lastidProjeto = mysqli_insert_id($conexao);
 

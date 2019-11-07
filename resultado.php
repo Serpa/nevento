@@ -23,12 +23,14 @@ mysqli_query($conexao, "SET NAMES utf8");
       </div>
       <div class="card-body">
         <div class="table-responsive">
-          <table class="table table-bordered table-striped " id="lista_qrcode" width="100%" cellspacing="0">
+          <table class="table table-bordered table-striped " id="resultado" width="100%" cellspacing="0">
             <thead>
               <tr>
                 <th>Nome Projeto</th>
                 <th>Categoria</th>
+                <th>Área</th>
                 <th>Autor do Projeto</th>
+                <th>Instituição</th>
                 <th>Orientador do Projeto</th>
                 <th>Apresentador do Projeto</th>
                 <th>Nota Final</th>
@@ -45,12 +47,16 @@ mysqli_query($conexao, "SET NAMES utf8");
             projetos.autor_projeto,
             projetos.orientadores_projeto_id,
             projetos.apresentador_projeto,
+            projetos.areas_projeto_id,
+            projetos.instituicao_autor,
+            areas_projeto.id,
+            areas_projeto.nome_area,
             categorias_projetos.id,
             categorias_projetos.nome_categoria
             
          FROM 
-            avaliacoes,projetos,orientadores_projeto,coautores_projeto,categorias_projetos 
-            WHERE avaliacoes.projetos_id = projetos.id AND projetos.categorias_projetos_id = categorias_projetos.id AND projetos.orientadores_projeto_id = orientadores_projeto.id AND avaliacoes.projetos_id IN (SELECT avaliacoes.projetos_id FROM avaliacoes GROUP BY avaliacoes.projetos_id) GROUP BY avaliacoes.projetos_id");
+            avaliacoes,projetos,orientadores_projeto,coautores_projeto,categorias_projetos,areas_projeto 
+            WHERE avaliacoes.projetos_id = projetos.id AND projetos.areas_projeto_id = areas_projeto.id AND projetos.categorias_projetos_id = categorias_projetos.id AND projetos.orientadores_projeto_id = orientadores_projeto.id AND avaliacoes.projetos_id IN (SELECT avaliacoes.projetos_id FROM avaliacoes GROUP BY avaliacoes.projetos_id) GROUP BY avaliacoes.projetos_id");
             while ($result = mysqli_fetch_array($query)) {
               $query2 = mysqli_query($conexao, "SELECT 
    avaliacoes.projetos_id, 
@@ -73,34 +79,51 @@ FROM
    WHERE avaliacoes.projetos_id = '" . $result['projetos_id'] . "'");
               $result2 = mysqli_fetch_array($query2);
               $result2['MEDIA'] = number_format($result2['MEDIA'], 2, '.', '');
-              if($result['apresentador_projeto']==0)
-              {echo "<tr>
+              if ($result['apresentador_projeto'] == 0) {
+                echo "<tr>
                 <td>" . ($result['nome_projeto']) . "</td>
                 <td>" . ($result['nome_categoria']) . "</td>
+                <td>" . ($result['nome_area']) . "</td>
                 <td>" . ($result['autor_projeto']) . "</td>
+                <td>" . ($result['instituicao_autor']) . "</td>
                 <td>" . ($result['nome_orientador']) . "</td>
                 <td>" . ($result['autor_projeto']) . "</td>
                 <td>" . ($result2['MEDIA']) . "</td>
-                </tr>";}else{$apresentador = mysqli_query($conexao,"SELECT
+                </tr>";
+              } else {
+                $apresentador = mysqli_query($conexao, "SELECT
                   *
                   FROM
                   coautores_projeto
                   WHERE
                   id = '" . $result['apresentador_projeto'] . "'");
-                  $result_apresentador = mysqli_fetch_array($apresentador);
-                  echo "<tr>
+                $result_apresentador = mysqli_fetch_array($apresentador);
+                echo "<tr>
                 <td>" . ($result['nome_projeto']) . "</td>
                 <td>" . ($result['nome_categoria']) . "</td>
+                <td>" . ($result['nome_area']) . "</td>
                 <td>" . ($result['autor_projeto']) . "</td>
+                <td>" . ($result['instituicao_autor']) . "</td>
                 <td>" . ($result['nome_orientador']) . "</td>
                 <td>" . ($result_apresentador['nome_coautor']) . "</td>
                 <td>" . ($result2['MEDIA']) . "</td>
                 </tr>";
-                }
-              
+              }
             }
             ?>
             <tbody>
+            <tfoot>
+              <tr>
+                <th>Nome Projeto</th>
+                <th>Categoria</th>
+                <th>Área</th>
+                <th>Autor do Projeto</th>
+                <th>Instituição</th>
+                <th>Orientador do Projeto</th>
+                <th>Apresentador do Projeto</th>
+                <th>Nota Final</th>
+              </tr>
+            </tfoot>
           </table>
         </div>
       </div>
@@ -158,16 +181,61 @@ FROM
 <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
 
 
-<script type="text/javascript">
+<script>
   $(document).ready(function() {
-    $('#lista_qrcode').DataTable({
+    $('#resultado').DataTable({
+      initComplete: function() {
+        this.api().columns([1, 2, 4]).every(function() {
+          var column = this;
+          var select = $('<select><option value="">Mostrar todos</option></select>')
+            .appendTo($(column.footer()).empty())
+            .on('change', function() {
+              var val = $.fn.dataTable.util.escapeRegex(
+                $(this).val()
+              );
+
+              column
+                .search(val ? '^' + val + '$' : '', true, false)
+                .draw();
+            });
+
+          column.data().unique().sort().each(function(d, j) {
+            select.append('<option value="' + d + '">' + d + '</option>')
+          });
+        });
+      },
       dom: 'Bfrtip',
+      columnDefs: [{
+        targets: 1,
+        className: 'noVis'
+      }],
       buttons: [{
           extend: "print",
           text: 'Imprimir',
           exportOptions: {
             columns: ':visible',
             stripHtml: false
+          },
+          customize: function(win) {
+
+            var last = null;
+            var current = null;
+            var bod = [];
+
+            var css = '@page { size: landscape; }',
+              head = win.document.head || win.document.getElementsByTagName('head')[0],
+              style = win.document.createElement('style');
+
+            style.type = 'text/css';
+            style.media = 'print';
+
+            if (style.styleSheet) {
+              style.styleSheet.cssText = css;
+            } else {
+              style.appendChild(win.document.createTextNode(css));
+            }
+
+            head.appendChild(style);
           }
         },
         {
@@ -183,15 +251,14 @@ FROM
           text: 'PDF',
           orientation: 'landscape',
           exportOptions: {
-            columns: ':visible',
-            stripHtml: false
+            columns: ':visible'
           }
         },
         {
           extend: 'colvis',
           text: 'Esconder Colunas'
         }
-      ],"order": [[ 5, "desc" ]],
+      ],"order": [[ 7, "desc" ]],
       "language": {
         "sEmptyTable": "Nenhum registro encontrado",
         "sInfo": "Mostrando de _START_ até _END_ de _TOTAL_ registros",

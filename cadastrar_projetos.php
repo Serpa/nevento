@@ -75,16 +75,6 @@ mysqli_query($conexao, "SET NAMES utf8");
                     </div>
                 </div>
 
-                <div class="item form-group">
-                    <label class="control-label col-md-6 col-sm-3 col-xs-12" for="nome">Subárea do Projeto:
-                    </label>
-                    <div class="col-md-10 col-sm-6 col-xs-12">
-                        <span class="carregando">Aguarde, carregando...</span>
-                        <select class="form-control col-md-10 col-xs-12" name="id_sub_categoria" id="id_sub_categoria">
-                            <option value="">Escolha a Subárea</option>
-                        </select>
-                    </div>
-                </div>
 
                 <div class="item form-group">
                     <label class="control-label col-md-6 col-sm-3 col-xs-12" for="nome">Palavras chave:
