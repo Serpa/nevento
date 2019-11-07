@@ -4,7 +4,7 @@ include 'phpqrcode/qrlib.php';
 include "header.php";
 
 mysqli_query($conexao, "SET NAMES utf8");
-$result_coautor = "SELECT * FROM coautores_projeto";
+$result_coautor = "SELECT coautores_projeto.id,coautores_projeto.nome_coautor,projeto_coautores.id_projeto,projeto_coautores.id_coautores,projetos.id AS pid,projetos.nome_projeto FROM coautores_projeto,projeto_coautores,projetos WHERE projeto_coautores.id_projeto = projetos.id AND coautores_projeto.id = projeto_coautores.id_coautores";
 $resultado_coautor = mysqli_query($conexao, $result_coautor);
 ?>
 
@@ -26,10 +26,11 @@ $resultado_coautor = mysqli_query($conexao, $result_coautor);
             </div>
             <div class="card-body">
                 <div class="table-responsive">
-                    <table class="table table-bordered table-striped " id="lista_qrcode" width="100%" cellspacing="0">
+                    <table class="table table-bordered table-striped " id="coautor" width="100%" cellspacing="0">
                         <thead>
                             <tr>
                                 <th>Nome</th>
+                                <th>Projeto</th>
                                 <th>Ações</th>
                             </tr>
                         </thead>
@@ -39,10 +40,13 @@ $resultado_coautor = mysqli_query($conexao, $result_coautor);
 
                                 <tr>
                                     <td><?php echo $rows_coautor['nome_coautor']; ?></td>
+                                    <td><?php echo $rows_coautor['nome_projeto']; ?></td>
                                     <td>
                                         <a class='btn-sm btn-warning' href="#" data-toggle="modal" data-target="#editmodal<?php echo $rows_coautor['id']; ?>"><i class='fas fa-edit'></i></a>
                                         <a class='btn-sm btn-danger' href="del_coautor.php?id=<?php echo $rows_coautor['id']; ?>" onclick="return confirm('Você tem certeza que deseja deletar esse coautor?');"><i class='fas fa-trash-alt'></i></a>
                                         <a class='btn-sm btn-success' href="#" data-toggle="modal" data-target="#addmodal"><i class="fas fa-plus"></i></a>
+                                        <a class='btn-sm btn-primary' href="#" data-toggle="modal" data-target="#linkmodal<?php echo $rows_coautor['id']; ?>"><i class="fas fa-link"></i></a>
+                                        <a class='btn-sm btn-danger' href="unlink_coautor.php?id=<?php echo $rows_coautor['id']; ?>&projeto=<?php echo $rows_coautor['pid']; ?>" onclick="return confirm('Você tem certeza que deseja desvincular esse coautor?');"><i class="fas fa-unlink"></i></a>
                                     </td>
                                     <!-- Edit Modal-->
                                     <div class="modal fade" id="editmodal<?php echo $rows_coautor['id']; ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
@@ -131,8 +135,71 @@ $resultado_coautor = mysqli_query($conexao, $result_coautor);
                                         </div>
                                     </div>
                                     <!-- Fim Modal -->
+
+                                    <!-- Link Modal-->
+                                    <div class="modal fade" id="linkmodal<?php echo $rows_coautor['id']; ?>" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                        <div class="modal-dialog modal-xl" role="document">
+                                            <div class="modal-content">
+                                                <div class="modal-header">
+                                                    <h5 class="modal-title" id="exampleModalLabel">Coautor:<strong>
+                                                            <font color="#3c6178"> <?php echo $rows_coautor['nome_coautor']; ?></font>
+                                                        </strong></h5>
+                                                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                                                        <span aria-hidden="true">×</span>
+                                                    </button>
+                                                </div>
+                                                <div class="modal-body">
+                                                    <form action="linka_coautor.php" method="POST" id="formlinka<?php echo $rows_coautor['id']; ?>" class="form-horizontal form-label-left">                                          
+
+                                                        <div class="item form-group">
+                                                            <div class="col-md-10 col-sm-6 col-xs-12">
+                                                                <input class="form-control col-md-10 col-xs-12" name="id_coautor" type="hidden" value="<?php echo $rows_coautor['id']; ?>">
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="item form-group">
+                                                            <label class="control-label col-md-6 col-sm-3 col-xs-12" for="nome">Projetos:
+                                                            </label>
+                                                            <div class="col-md-10 col-sm-6 col-xs-12">
+                                                                <select class="form-control col-md-10 col-xs-12" name="projeto" required>
+                                                                    <option value="">Selecione o Projeto</option>
+                                                                    <?php
+                                                                        $result_projeto = "SELECT * FROM projetos";
+                                                                        $resultado_projeto = mysqli_query($conexao, $result_projeto);
+                                                                        while ($row_projeto = mysqli_fetch_assoc($resultado_projeto)) { ?>
+                                                                        <option value="<?php echo utf8_encode($row_projeto['id']); ?>"><?php echo $row_projeto['nome_projeto']; ?></option> <?php
+                                                                                                                                                                                                }
+                                                                                                                                                                                                ?>
+                                                                </select>
+                                                            </div>
+                                                        </div>
+
+                                                        <div class="item form-group">
+                                                            <label class="control-label col-md-6 col-sm-3 col-xs-12" for="nome">Nome Coautor
+                                                            </label>
+                                                            <div class="col-md-10 col-sm-6 col-xs-12">
+                                                                <input class="form-control col-md-10 col-xs-12" name="nome_coautor" disabled type="text" value="<?php echo $rows_coautor['nome_coautor']; ?>">
+                                                            </div>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                                <div class="modal-footer">
+                                                    <button class="btn btn-primary" form="formlinka<?php echo $rows_coautor['id']; ?>" type="submit">Vincular Coautor</button>
+                                                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancelar</button>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <!-- Fim Modal -->
                                 </tr>
                             <?php } ?>
+                        <tfoot>
+                            <tr>
+                                <th>Nome</th>
+                                <th>Projeto</th>
+                                <th>Ações</th>
+                            </tr>
+                        </tfoot>
                     </table>
                 </div>
             </div>
@@ -191,16 +258,61 @@ $resultado_coautor = mysqli_query($conexao, $result_coautor);
 <script src="vendor/datatables/dataTables.bootstrap4.min.js"></script>
 
 
-<script type="text/javascript">
+<script>
     $(document).ready(function() {
-        $('#lista_qrcode').DataTable({
+        $('#coautor').DataTable({
+            initComplete: function() {
+                this.api().columns([0, 1]).every(function() {
+                    var column = this;
+                    var select = $('<select><option value="">Mostrar todos</option></select>')
+                        .appendTo($(column.footer()).empty())
+                        .on('change', function() {
+                            var val = $.fn.dataTable.util.escapeRegex(
+                                $(this).val()
+                            );
+
+                            column
+                                .search(val ? '^' + val + '$' : '', true, false)
+                                .draw();
+                        });
+
+                    column.data().unique().sort().each(function(d, j) {
+                        select.append('<option value="' + d + '">' + d + '</option>')
+                    });
+                });
+            },
             dom: 'Bfrtip',
+            columnDefs: [{
+                targets: 1,
+                className: 'noVis'
+            }],
             buttons: [{
                     extend: "print",
                     text: 'Imprimir',
                     exportOptions: {
                         columns: ':visible',
                         stripHtml: false
+                    },
+                    customize: function(win) {
+
+                        var last = null;
+                        var current = null;
+                        var bod = [];
+
+                        var css = '@page { size: landscape; }',
+                            head = win.document.head || win.document.getElementsByTagName('head')[0],
+                            style = win.document.createElement('style');
+
+                        style.type = 'text/css';
+                        style.media = 'print';
+
+                        if (style.styleSheet) {
+                            style.styleSheet.cssText = css;
+                        } else {
+                            style.appendChild(win.document.createTextNode(css));
+                        }
+
+                        head.appendChild(style);
                     }
                 },
                 {
@@ -216,8 +328,7 @@ $resultado_coautor = mysqli_query($conexao, $result_coautor);
                     text: 'PDF',
                     orientation: 'landscape',
                     exportOptions: {
-                        columns: ':visible',
-                        stripHtml: false
+                        columns: ':visible'
                     }
                 },
                 {
@@ -227,7 +338,7 @@ $resultado_coautor = mysqli_query($conexao, $result_coautor);
             ],
             "columnDefs": [{
                 "width": "15%",
-                "targets": 1
+                "targets": 2
             }],
             "language": {
                 "sEmptyTable": "Nenhum registro encontrado",
