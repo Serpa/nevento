@@ -13,7 +13,7 @@ $result = mysqli_fetch_array($resultado);
 
 $user = $result['usuario_pesq'];
 $senha_db = $result['senha_pesq'];
-
+if(!empty($senha_pesq) || !empty($usuario_pesq)){
 if ($usuario_pesq == $user  && $senha_pesq == $senha_db) {
 	$_SESSION['login'] = true;
 	$_SESSION['usuario_pesq'] = $usuario_pesq;
@@ -21,7 +21,10 @@ if ($usuario_pesq == $user  && $senha_pesq == $senha_db) {
 
 	header('location: index.php');
 } else {
-	header('location: login.php');
+	echo "<script>alert('Usuário e/ou senha inválidos.');window.location='login.php'</script>";
+}
+}else {
+	echo "<script>alert('Usuário e/ou senha inválidos.');window.location='login.php'</script>";
 }
 echo $_SESSION['usuario_pesq'];
 echo $_SESSION['usuario_pesq_id'];
