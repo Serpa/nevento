@@ -22,7 +22,6 @@ areas_projeto.nome_area,
 subareas_projeto.nome_subarea,
 categorias_projetos.id AS catid,
 areas_projeto.id AS areaid,
-subareas_projeto.id AS subid,
 orientadores_projeto.instituicao_orientador,
 orientadores_projeto.email_orientadorcol,
 orientadores_projeto.email_orientadorcol1,
@@ -37,7 +36,6 @@ coautores_projeto
 WHERE 
 projetos.categorias_projetos_id = categorias_projetos.id
 and projetos.areas_projeto_id = areas_projeto.id
-and projetos.subarea_projeto_id = subareas_projeto.id
 and projetos.orientadores_projeto_id = orientadores_projeto.id
 GROUP BY projetos.nome_projeto";
 $resultado_consultaProjeto = mysqli_query($conexao, $result_consultaProjeto);
@@ -66,7 +64,7 @@ $resultado_consultaProjeto = mysqli_query($conexao, $result_consultaProjeto);
       </div>
       <div class="card-body">
         <div class="table-responsive">
-          <table class="table table-bordered" id="lista-projeto" width="100%" cellspacing="0">
+          <table class="table display responsive" id="lista-projeto" width="100%" cellspacing="0">
             <thead>
               <tr>
                 <th>Nome</th>
